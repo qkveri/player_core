@@ -1,12 +1,13 @@
-# player_core
+# MPlayer Core
 
-## Init
+## Mobile
+### Init
 
 ```shell
 gomobile init
 ```
 
-## Build Android .aar
+### Build Android .aar
 ```shell
 export ANDROID_HOME=...
 export ANDROID_NDK_HOME=...
@@ -14,4 +15,4 @@ export ANDROID_NDK_HOME=...
 gomobile bind --target=android ./mobile
 ```
 
-## Player CLI
+## CLI
