@@ -53,7 +53,7 @@ func InitApp(mainCallback app.CallbackMain) {
 		Debug: true,
 
 		ApiBaseURL: "https://api.muzplat.ru/api/player/v2",
-		DBFilePath: "/Users/petr/dev/apps/pult/player_core/app.db",
+		DBFilePath: "/Users/petr/dev/apps/pult/player_core/tmp/app.db",
 		LogWriter:  os.Stdout,
 		//LogWriter:  new(bytes.Buffer),
 	}

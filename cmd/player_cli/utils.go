@@ -11,7 +11,8 @@ func waitInput() string {
 	reader := bufio.NewReader(os.Stdin)
 	text, _ := reader.ReadString('\n')
 	// convert CRLF to LF
-	text = strings.Replace(text, "\n", "", -1)
+	text = strings.ReplaceAll(text, "\n", "")
+
 	return strings.TrimSpace(text)
 }
 

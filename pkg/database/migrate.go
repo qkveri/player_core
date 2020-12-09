@@ -29,7 +29,7 @@ func Migrate(db *sql.DB) error {
 		migrations: []migration{
 			{
 				// language=sql
-				sql: `CREATE TABLE auth (token VARCHAR(32) NOT NULL)`,
+				sql: `CREATE TABLE auth (player_id int64 NOT NULL, token VARCHAR(32) NOT NULL)`,
 			},
 		},
 	}

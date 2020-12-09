@@ -17,7 +17,8 @@ type App struct {
 	config       Config
 	callbackMain CallbackMain
 
-	logger zerolog.Logger
+	logger    zerolog.Logger
+	apiClient api.Client
 
 	// repos...
 	playerInfoRepo domain.PlayerInfoRepository
@@ -60,12 +61,12 @@ func (a *App) Init() error {
 	a.logger.Info().Msg("database migration applied")
 
 	// init common...
-	var apiClient api.Client = api.NewHTTPClient(a.config.ApiBaseURL)
+	a.apiClient = api.NewHTTPClient(a.config.ApiBaseURL)
 
 	// init repos...
-	a.playerInfoRepo = repositories.NewPlayerInfoApiRepo(apiClient)
-	a.loginRepo = repositories.NewLoginApiRepo(apiClient)
-	a.authRepo = repositories.NewAuthSqlLiteRepo(db)
+	a.playerInfoRepo = repositories.NewPlayerInfoApiRepo(a.apiClient)
+	a.loginRepo = repositories.NewLoginApiRepo(a.apiClient)
+	a.authRepo = repositories.NewAuthSqliteRepo(db)
 
 	// show first screen...
 	a.showScreen(ScreenLoadingData)
@@ -79,8 +80,32 @@ func (a *App) LoadingData(ctx context.Context, callback CallbackLoadingData) {
 		return
 	}
 
+	// load auth data...
+	a.logger.Info().Msg("auth get from repo...")
+
+	auth, err := a.authRepo.Get(ctx)
+
+	if err != nil {
+		a.logger.Err(err).Msg("auth get from repo failed")
+		callback.SendErrorMessage(err.Error())
+
+		return
+	}
+
+	if auth != nil {
+		a.logger.Info().Interface("auth", auth).
+			Msg("auth get from repo success, set to api client...")
+		a.apiClient.SetAuthToken(auth.Token)
+	} else {
+		a.logger.Info().Msg("auth not set, show login screen...")
+		a.showScreen(ScreenLogin)
+
+		return
+	}
+
 	a.logger.Info().Msg("playerInfo loading starts...")
 	callback.SendText("Загрузка информации о заведении...")
+
 	playerInfo, err := a.playerInfoRepo.Get(ctx)
 
 	if err != nil {
@@ -100,8 +125,6 @@ func (a *App) LoadingData(ctx context.Context, callback CallbackLoadingData) {
 	a.logger.Info().Interface("playerInfo", playerInfo).Msg("playerInfo loaded")
 
 	fmt.Println(playerInfo)
-
-	return
 }
 
 func (a *App) Login(ctx context.Context, callback CallbackLogin, code string) {
@@ -142,6 +165,7 @@ func (a *App) Login(ctx context.Context, callback CallbackLogin, code string) {
 	if err := a.authRepo.Set(ctx, auth); err != nil {
 		a.logger.Err(err).Msg("auth set to repo failed")
 		callback.SendErrorMessage(err.Error())
+
 		return
 	}
 

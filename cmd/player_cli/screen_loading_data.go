@@ -14,7 +14,7 @@ type callbackLoadingData struct {
 }
 
 func (l *callbackLoadingData) SendText(text string) {
-	fmt.Printf(fmt.Sprintf("💾 LoadiingText: %s\n", text))
+	fmt.Printf("💾 LoadiingText: %s\n", text)
 }
 
 func (l *callbackLoadingData) SendErrorMessage(message string) {
