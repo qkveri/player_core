@@ -88,7 +88,7 @@ func (a *App) createLogFile() (*os.File, error) {
 				return nil, fmt.Errorf("os.Mkdir: %w, dir: %s", err, dir)
 			}
 		} else {
-			return nil, fmt.Errorf("os.Stat: %v, dir: %s", err, dir)
+			return nil, fmt.Errorf("os.Stat: %w, dir: %s", err, dir)
 		}
 	}
 
@@ -97,7 +97,7 @@ func (a *App) createLogFile() (*os.File, error) {
 	file, err := os.Create(filePath)
 
 	if err != nil {
-		return nil, fmt.Errorf("os.Create: %v, filePath: %s", err, filePath)
+		return nil, fmt.Errorf("os.Create: %w, filePath: %s", err, filePath)
 	}
 
 	return file, nil

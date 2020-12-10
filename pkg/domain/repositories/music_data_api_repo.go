@@ -40,6 +40,7 @@ func (m *musicDataApiRepo) Get(ctx context.Context) (*domain.MusicData, error) {
 	}
 
 	var resMusicDataTrackToTrack = func(resTrack resMusicDataTrack) domain.Track {
+		// nolint:gomnd
 		return domain.Track{
 			ID:    resTrack.ID,
 			Title: resTrack.Title,
