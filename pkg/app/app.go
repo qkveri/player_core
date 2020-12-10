@@ -114,31 +114,16 @@ func (a *App) showScreen(name string) {
 	a.callbackMain.ShowScreen(name)
 }
 
-type ErrorFromClient struct {
-	Message string
-	Err     error
-}
-
-func (e *ErrorFromClient) Error() string {
-	return e.Message
-}
-
-func (a *App) prepareErr(err error) error {
-	e := &ErrorFromClient{
-		Message: "Произошла ошибка, пожалуйста, обратитесь в службу поддержки",
-		Err:     err,
-	}
-
+func (a *App) errMessageForClient(err error) string {
 	if a.config.Debug {
-		e.Message = err.Error()
-
-		return e
+		return err.Error()
 	}
 
 	switch err.(type) {
-	case *api.NoInternetError:
-		e.Message = "Нет подключения к интернету"
-	}
+	default:
+		return "Произошла ошибка, пожалуйста, обратитесь в службу поддержки"
 
-	return e
+	case *api.NoInternetError:
+		return "Нет подключения к интернету"
+	}
 }

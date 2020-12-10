@@ -43,7 +43,7 @@ func (a *App) LoadData(ctx context.Context, callback CallbackLoadData) {
 
 		switch err.(type) {
 		default:
-			callback.SendErrorMessage(a.prepareErr(err).Error())
+			callback.SendErrorMessage(a.errMessageForClient(err))
 
 		case *api.UnauthorizedError:
 			a.showScreen(ScreenLogin)
@@ -83,7 +83,7 @@ func (a *App) loadPlayerInfo(ctx context.Context, callback CallbackLoadData) err
 	jsonPlayerInfo, err := json.Marshal(playerInfo)
 
 	if err != nil {
-		callback.SendErrorMessage(a.prepareErr(err).Error())
+		callback.SendErrorMessage(a.errMessageForClient(err))
 
 		return fmt.Errorf("playerInfo cannot unmarshall: %w", err)
 	}

@@ -28,7 +28,7 @@ func (a *App) Login(ctx context.Context, callback CallbackLogin, code string) {
 			}
 		}
 
-		callback.SendErrorMessage(a.prepareErr(err).Error())
+		callback.SendErrorMessage(a.errMessageForClient(err))
 
 		return
 	}
@@ -45,7 +45,7 @@ func (a *App) Login(ctx context.Context, callback CallbackLogin, code string) {
 
 	if err := a.authRepo.Set(ctx, auth); err != nil {
 		a.logger.Err(err).Msg("auth set to repo failed")
-		callback.SendErrorMessage(a.prepareErr(err).Error())
+		callback.SendErrorMessage(a.errMessageForClient(err))
 
 		return
 	}
