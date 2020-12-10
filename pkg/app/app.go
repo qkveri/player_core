@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"path"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -42,7 +43,9 @@ func (a *App) Init() {
 	// init repos...
 	a.playerInfoRepo = repositories.NewPlayerInfoApiRepo(a.apiClient)
 	a.loginRepo = repositories.NewLoginApiRepo(a.apiClient)
-	a.authRepo = repositories.NewAuthFileRepo(a.config.AuthFilePath, a.config.AuthKey)
+
+	authFilePath := path.Join(a.config.DataDir, "a.tk")
+	a.authRepo = repositories.NewAuthFileRepo(authFilePath, a.config.SecretKey)
 
 	// show first screen...
 	a.showScreen(ScreenLoadingData)

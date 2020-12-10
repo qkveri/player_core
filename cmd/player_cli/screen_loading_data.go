@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/qkveri/player_core/core"
 )
 
 func openLoadingScreen() {
 	cb := &callbackLoadingData{}
-	RegisterLoadingDataCallback(cb)
-	LoadingData()
+
+	core.RegisterLoadingDataCallback(cb)
+	core.LoadingData()
 }
 
 type callbackLoadingData struct {
@@ -21,6 +24,6 @@ func (l *callbackLoadingData) SendErrorMessage(message string) {
 	fmt.Printf("\n❌ Ошибка загрузки: %s\n", message)
 
 	if waitConfirm("Повторить? [Y/n]: ") {
-		LoadingData()
+		core.LoadingData()
 	}
 }

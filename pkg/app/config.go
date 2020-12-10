@@ -9,13 +9,14 @@ const (
 )
 
 type Config struct {
-	Debug bool
+	Debug     bool
+	LogWriter io.Writer
 
-	LogWriter  io.Writer
+	SecretKey  string
 	ApiBaseURL string
 
-	AuthFilePath string
-	AuthKey      string
+	DataDir  string
+	CacheDir string
 }
 
 // Main...

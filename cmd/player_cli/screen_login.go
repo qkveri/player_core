@@ -1,10 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/qkveri/player_core/core"
+)
 
 func openLoginScreen() {
 	cb := &callbackLogin{}
-	RegisterLoginCallback(cb)
+
+	core.RegisterLoginCallback(cb)
 
 	// нажали "Вход"
 	fmt.Printf("\n🔒 Не авторизованы.\n")
@@ -35,5 +40,5 @@ func (l *callbackLogin) SendCodeIncorrectErrorMessage(message string) {
 }
 
 func (l *callbackLogin) login() {
-	Login(l.code)
+	core.Login(l.code)
 }

@@ -1,7 +1,8 @@
-package mobile
+package core
 
 import (
 	"context"
+	"os"
 
 	"github.com/qkveri/player_core/pkg/app"
 )
@@ -9,33 +10,45 @@ import (
 type (
 	CallbackMain        interface{ app.CallbackMain }
 	CallbackLoadingData interface{ app.CallbackLoadingData }
+	CallbackLogin       interface{ app.CallbackLogin }
 )
 
 var (
-	ctx = context.Background()
+	ctx, ctxCancel = context.WithCancel(context.Background())
 
 	a *app.App
 
 	// callbacks
 	cbLoadingData CallbackLoadingData
+	cbLogin       CallbackLogin
 )
 
 func InitApp(
 	debug bool,
+	secretKey string,
 	apiBaseURL string,
-	authFilePath string,
-	authKey string,
+	dataDir string,
+	cacheDir string,
 
 	callbackMain CallbackMain,
 ) {
 	config := app.Config{
-		Debug:        debug,
-		ApiBaseURL:   apiBaseURL,
-		AuthFilePath: authFilePath,
-		AuthKey:      authKey,
+		Debug:     debug,
+		LogWriter: os.Stdout,
+
+		SecretKey:  secretKey,
+		ApiBaseURL: apiBaseURL,
+
+		DataDir:  dataDir,
+		CacheDir: cacheDir,
 	}
 
 	a = app.NewApp(config, callbackMain)
+	a.Init()
+}
+
+func Shutdown() {
+	ctxCancel()
 }
 
 func RegisterLoadingDataCallback(callback CallbackLoadingData) {
@@ -44,4 +57,12 @@ func RegisterLoadingDataCallback(callback CallbackLoadingData) {
 
 func LoadingData() {
 	a.LoadingData(ctx, cbLoadingData)
+}
+
+func RegisterLoginCallback(callback CallbackLogin) {
+	cbLogin = callback
+}
+
+func Login(code string) {
+	a.Login(ctx, cbLogin, code)
 }

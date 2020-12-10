@@ -16,8 +16,8 @@
 *.pem
 
 # dist
-mobile.aar
-mobile-sources.jar
+core.aar
+core-sources.jar
 
 # tmp
 tmp/*
