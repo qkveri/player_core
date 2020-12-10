@@ -1,7 +1,5 @@
 package app
 
-import "io"
-
 const (
 	ScreenLoadingData = "loading"
 	ScreenLogin       = "login"
@@ -9,8 +7,7 @@ const (
 )
 
 type Config struct {
-	Debug     bool
-	LogWriter io.Writer
+	Debug bool
 
 	SecretKey  string
 	ApiBaseURL string

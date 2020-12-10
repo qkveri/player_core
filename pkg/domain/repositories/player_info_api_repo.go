@@ -54,7 +54,7 @@ func (p *playerInfoApiRepo) Get(ctx context.Context) (*domain.PlayerInfo, error)
 	}
 
 	if err := json.Unmarshal(resRaw, &resPlayerInfo); err != nil {
-		return nil, fmt.Errorf("player info unmarshall fail: %w, resRaw: %s", err, resRaw)
+		return nil, fmt.Errorf("player info unmarshall fail: %w", err)
 	}
 
 	var demoAt *time.Time
@@ -70,14 +70,14 @@ func (p *playerInfoApiRepo) Get(ctx context.Context) (*domain.PlayerInfo, error)
 	}
 
 	return &domain.PlayerInfo{
-		Id:                resPlayerInfo.Id,
+		ID:                resPlayerInfo.Id,
 		Name:              resPlayerInfo.Name,
 		HasCrossFade:      resPlayerInfo.HasCrossFade,
 		CrossFadeDuration: time.Second * time.Duration(resPlayerInfo.CrossFadeSec),
 		ServerTime:        time.Unix(resPlayerInfo.ServerTime, 0),
 		DemoAt:            demoAt,
 		Company: domain.PlayerInfoCompany{
-			Id:           resPlayerInfo.Company.Id,
+			ID:           resPlayerInfo.Company.Id,
 			Name:         resPlayerInfo.Company.Name,
 			LkURL:        resPlayerInfo.Company.LkURL,
 			SiteURL:      resPlayerInfo.Company.SiteURL,

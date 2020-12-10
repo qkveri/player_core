@@ -7,7 +7,7 @@ import (
 
 type (
 	PlayerInfo struct {
-		Id                int
+		ID                int
 		Name              string
 		HasCrossFade      bool
 		CrossFadeDuration time.Duration
@@ -18,7 +18,7 @@ type (
 	}
 
 	PlayerInfoCompany struct {
-		Id      int
+		ID      int
 		Name    string
 		LkURL   string
 		SiteURL string

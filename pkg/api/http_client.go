@@ -49,7 +49,25 @@ func (c *httpClient) POST(ctx context.Context, path string, body interface{}) ([
 	return c.do(ctx, http.MethodPost, path, bodyBuf)
 }
 
+func (c *httpClient) checkInternetConnection() error {
+	res, err := c.client.Get(c.baseURL + return204Path)
+
+	if err != nil {
+		return &NoInternetError{
+			Err: err,
+		}
+	}
+
+	_ = res.Body.Close()
+
+	return nil
+}
+
 func (c *httpClient) do(ctx context.Context, method, path string, body io.Reader) ([]byte, error) {
+	if err := c.checkInternetConnection(); err != nil {
+		return nil, err
+	}
+
 	u := c.baseURL + path
 
 	req, err := http.NewRequestWithContext(ctx, method, u, body)

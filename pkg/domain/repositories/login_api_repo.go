@@ -38,7 +38,7 @@ func (l *loginApiRepo) Login(ctx context.Context, code string) (*domain.LoginRes
 	}
 
 	if err := json.Unmarshal(resRaw, &resLoginResponse); err != nil {
-		return nil, fmt.Errorf("login response unmarshall fail: %w, resRaw: %s", err, resRaw)
+		return nil, fmt.Errorf("login response unmarshall fail: %w", err)
 	}
 
 	return &domain.LoginResponse{

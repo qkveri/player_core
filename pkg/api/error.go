@@ -2,6 +2,14 @@ package api
 
 import "fmt"
 
+type NoInternetError struct {
+	Err error
+}
+
+func (e *NoInternetError) Error() string {
+	return fmt.Sprintf("no internet connection: %v", e.Err)
+}
+
 type RequestError struct {
 	StatusCode int    `json:"statusCode"`
 	Message    string `json:"message"`

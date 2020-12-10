@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"os"
 
 	"github.com/qkveri/player_core/pkg/app"
 )
@@ -33,8 +32,7 @@ func InitApp(
 	callbackMain CallbackMain,
 ) {
 	config := app.Config{
-		Debug:     debug,
-		LogWriter: os.Stdout,
+		Debug: debug,
 
 		SecretKey:  secretKey,
 		ApiBaseURL: apiBaseURL,
