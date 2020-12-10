@@ -6,13 +6,10 @@ import (
 	"github.com/qkveri/player_core/pkg/app"
 )
 
-type CallbackMain interface {
-	app.CallbackMain
-}
-
-type CallbackLoadingData interface {
-	app.CallbackLoadingData
-}
+type (
+	CallbackMain        interface{ app.CallbackMain }
+	CallbackLoadingData interface{ app.CallbackLoadingData }
+)
 
 var (
 	ctx = context.Background()
