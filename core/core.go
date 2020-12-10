@@ -45,6 +45,10 @@ func InitApp(
 	a.Init()
 }
 
+func Run() {
+	a.Run(ctx)
+}
+
 func Shutdown() {
 	ctxCancel()
 }

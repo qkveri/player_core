@@ -21,9 +21,9 @@ func (l *callbackLoadData) SendText(text string) {
 }
 
 func (l *callbackLoadData) SendErrorMessage(message string) {
-	fmt.Printf("\n❌ Ошибка загрузки: %s\n", message)
+	fmt.Printf("\n❌ Ошибка загрузки: %s\nПовторить? [Y/n]: ", message)
 
-	if waitConfirm("Повторить? [Y/n]: ") {
+	if waitConfirm() {
 		core.LoadData()
 	}
 }

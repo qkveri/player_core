@@ -36,4 +36,6 @@ func main() {
 		"/Users/petr/dev/apps/pult/player_core/tmp/cache",
 		cb,
 	)
+
+	core.Run()
 }

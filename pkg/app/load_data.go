@@ -89,6 +89,7 @@ func (a *App) loadPlayerInfo(ctx context.Context, callback CallbackLoadData) err
 	}
 
 	callback.SendPlayerInfo(string(jsonPlayerInfo))
+	a.state.PlayerInfo.Set(playerInfo)
 
 	return nil
 }
@@ -104,6 +105,8 @@ func (a *App) loadMusicData(ctx context.Context, callback CallbackLoadData) erro
 	}
 
 	a.logger.Debug().Interface("musicData", musicData).Msg("musicData loaded")
+
+	a.state.MusicData.Set(musicData)
 
 	return nil
 }

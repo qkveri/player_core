@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 )
@@ -16,9 +15,7 @@ func waitInput() string {
 	return strings.TrimSpace(text)
 }
 
-func waitConfirm(message string) bool {
-	fmt.Print(message)
-
+func waitConfirm() bool {
 	text := waitInput()
 	text = strings.ToLower(text)
 

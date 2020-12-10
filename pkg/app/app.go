@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -13,12 +14,14 @@ import (
 	"github.com/qkveri/player_core/pkg/api"
 	"github.com/qkveri/player_core/pkg/domain"
 	"github.com/qkveri/player_core/pkg/domain/repositories"
+	"github.com/qkveri/player_core/pkg/state"
 )
 
 type App struct {
 	config       Config
 	callbackMain CallbackMain
 
+	state     *state.State
 	logger    zerolog.Logger
 	apiClient api.Client
 
@@ -37,6 +40,9 @@ func NewApp(config Config, callbackMain CallbackMain) *App {
 }
 
 func (a *App) Init() {
+	// init state...
+	a.state = state.NewState()
+
 	// init logger...
 	a.logger = a.iniLogger()
 
@@ -51,6 +57,10 @@ func (a *App) Init() {
 
 	// show first screen...
 	a.showScreen(ScreenLoadingData)
+}
+
+func (a *App) Run(ctx context.Context) {
+	<-ctx.Done()
 }
 
 func (a *App) iniLogger() zerolog.Logger {

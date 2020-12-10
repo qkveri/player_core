@@ -24,9 +24,9 @@ type callbackLogin struct {
 }
 
 func (l *callbackLogin) SendErrorMessage(message string) {
-	fmt.Printf("\n❌ Ошибка логина: %s\n", message)
+	fmt.Printf("\n❌ Ошибка логина: %s\nПовторить? [Y/n]:", message)
 
-	if waitConfirm("Повторить? [Y/n]: ") {
+	if waitConfirm() {
 		l.login()
 	}
 }
