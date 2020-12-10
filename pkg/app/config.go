@@ -19,18 +19,16 @@ type Config struct {
 	CacheDir string
 }
 
-// Main...
 type CallbackMain interface {
 	ShowScreen(name string)
 }
 
-// Loading data...
-type CallbackLoadingData interface {
+type CallbackLoadData interface {
 	SendText(text string)
 	SendErrorMessage(message string)
+	SendPlayerInfo(json string)
 }
 
-// Login...
 type CallbackLogin interface {
 	SendErrorMessage(message string)
 	SendCodeIncorrectErrorMessage(message string)

@@ -7,23 +7,27 @@ import (
 )
 
 func openLoadingScreen() {
-	cb := &callbackLoadingData{}
+	cb := &callbackLoadData{}
 
-	core.RegisterLoadingDataCallback(cb)
-	core.LoadingData()
+	core.RegisterLoadDataCallback(cb)
+	core.LoadData()
 }
 
-type callbackLoadingData struct {
+type callbackLoadData struct {
 }
 
-func (l *callbackLoadingData) SendText(text string) {
+func (l *callbackLoadData) SendText(text string) {
 	fmt.Printf("💾 LoadingText: %s\n", text)
 }
 
-func (l *callbackLoadingData) SendErrorMessage(message string) {
+func (l *callbackLoadData) SendErrorMessage(message string) {
 	fmt.Printf("\n❌ Ошибка загрузки: %s\n", message)
 
 	if waitConfirm("Повторить? [Y/n]: ") {
-		core.LoadingData()
+		core.LoadData()
 	}
+}
+
+func (l *callbackLoadData) SendPlayerInfo(json string) {
+	fmt.Printf("💾 SetPlayerInfo: %s\n", json)
 }

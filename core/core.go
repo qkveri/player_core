@@ -8,9 +8,9 @@ import (
 )
 
 type (
-	CallbackMain        interface{ app.CallbackMain }
-	CallbackLoadingData interface{ app.CallbackLoadingData }
-	CallbackLogin       interface{ app.CallbackLogin }
+	CallbackMain     interface{ app.CallbackMain }
+	CallbackLoadData interface{ app.CallbackLoadData }
+	CallbackLogin    interface{ app.CallbackLogin }
 )
 
 var (
@@ -19,8 +19,8 @@ var (
 	a *app.App
 
 	// callbacks
-	cbLoadingData CallbackLoadingData
-	cbLogin       CallbackLogin
+	cbLoadData CallbackLoadData
+	cbLogin    CallbackLogin
 )
 
 func InitApp(
@@ -51,12 +51,12 @@ func Shutdown() {
 	ctxCancel()
 }
 
-func RegisterLoadingDataCallback(callback CallbackLoadingData) {
-	cbLoadingData = callback
+func RegisterLoadDataCallback(callback CallbackLoadData) {
+	cbLoadData = callback
 }
 
-func LoadingData() {
-	a.LoadingData(ctx, cbLoadingData)
+func LoadData() {
+	a.LoadData(ctx, cbLoadData)
 }
 
 func RegisterLoginCallback(callback CallbackLogin) {
