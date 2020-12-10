@@ -1,8 +1,6 @@
 package app
 
-import (
-	"io"
-)
+import "io"
 
 const (
 	ScreenLoadingData = "loading"
@@ -13,9 +11,11 @@ const (
 type Config struct {
 	Debug bool
 
-	ApiBaseURL string
-	DBFilePath string
 	LogWriter  io.Writer
+	ApiBaseURL string
+
+	AuthFilePath string
+	AuthKey      string
 }
 
 // Main...

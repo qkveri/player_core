@@ -1,28 +1,50 @@
 package mobile
 
 import (
-	"fmt"
-	"time"
+	"context"
+
+	"github.com/qkveri/player_core/pkg/app"
 )
 
-type JavaCallback interface {
-	SendString(string)
+type CallbackMain interface {
+	app.CallbackMain
 }
 
-// callback
-var jc JavaCallback
-
-func RegisterJavaCallback(c JavaCallback) {
-	jc = c
+type CallbackLoadingData interface {
+	app.CallbackLoadingData
 }
 
-func Init(cachePath string) {
-	fmt.Println(cachePath)
-}
+var (
+	ctx = context.Background()
 
-func Callback() {
-	for {
-		jc.SendString("tick")
-		<-time.After(time.Second)
+	a *app.App
+
+	// callbacks
+	cbLoadingData CallbackLoadingData
+)
+
+func InitApp(
+	debug bool,
+	apiBaseURL string,
+	authFilePath string,
+	authKey string,
+
+	callbackMain CallbackMain,
+) {
+	config := app.Config{
+		Debug:        debug,
+		ApiBaseURL:   apiBaseURL,
+		AuthFilePath: authFilePath,
+		AuthKey:      authKey,
 	}
+
+	a = app.NewApp(config, callbackMain)
+}
+
+func RegisterLoadingDataCallback(callback CallbackLoadingData) {
+	cbLoadingData = callback
+}
+
+func LoadingData() {
+	a.LoadingData(ctx, cbLoadingData)
 }

@@ -2,13 +2,11 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/rs/zerolog"
 
 	"github.com/qkveri/player_core/pkg/api"
-	"github.com/qkveri/player_core/pkg/database"
 	"github.com/qkveri/player_core/pkg/domain"
 	"github.com/qkveri/player_core/pkg/domain/repositories"
 )
@@ -37,41 +35,17 @@ func NewApp(config Config, callbackMain CallbackMain) *App {
 	return a
 }
 
-func (a *App) Init() error {
-	// connect db...
-	db, err := database.Connect(a.config.DBFilePath)
-
-	if err != nil {
-		return fmt.Errorf("db connect fail: %w", err)
-	}
-
-	defer func() {
-		if err := db.Close(); err != nil {
-			a.logger.Warn().Err(err).Msg("db close failed")
-		}
-	}()
-
-	a.logger.Info().Msg("database connected")
-
-	// run migrate db...
-	if err := database.Migrate(db); err != nil {
-		return fmt.Errorf("database migrate: %w", err)
-	}
-
-	a.logger.Info().Msg("database migration applied")
-
+func (a *App) Init() {
 	// init common...
 	a.apiClient = api.NewHTTPClient(a.config.ApiBaseURL)
 
 	// init repos...
 	a.playerInfoRepo = repositories.NewPlayerInfoApiRepo(a.apiClient)
 	a.loginRepo = repositories.NewLoginApiRepo(a.apiClient)
-	a.authRepo = repositories.NewAuthSqliteRepo(db)
+	a.authRepo = repositories.NewAuthFileRepo(a.config.AuthFilePath, a.config.AuthKey)
 
 	// show first screen...
 	a.showScreen(ScreenLoadingData)
-
-	return nil
 }
 
 func (a *App) LoadingData(ctx context.Context, callback CallbackLoadingData) {
@@ -86,10 +60,7 @@ func (a *App) LoadingData(ctx context.Context, callback CallbackLoadingData) {
 	auth, err := a.authRepo.Get(ctx)
 
 	if err != nil {
-		a.logger.Err(err).Msg("auth get from repo failed")
-		callback.SendErrorMessage(err.Error())
-
-		return
+		a.logger.Warn().Err(err).Msg("auth get from repo failed")
 	}
 
 	if auth != nil {
@@ -124,7 +95,7 @@ func (a *App) LoadingData(ctx context.Context, callback CallbackLoadingData) {
 
 	a.logger.Info().Interface("playerInfo", playerInfo).Msg("playerInfo loaded")
 
-	fmt.Println(playerInfo)
+	a.showScreen(ScreenPlayer)
 }
 
 func (a *App) Login(ctx context.Context, callback CallbackLogin, code string) {

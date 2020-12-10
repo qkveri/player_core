@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -53,16 +52,16 @@ func InitApp(mainCallback app.CallbackMain) {
 		Debug: true,
 
 		ApiBaseURL: "https://api.muzplat.ru/api/player/v2",
-		DBFilePath: "/Users/petr/dev/apps/pult/player_core/tmp/app.db",
 		LogWriter:  os.Stdout,
 		//LogWriter:  new(bytes.Buffer),
+
+		AuthFilePath: "/Users/petr/dev/apps/pult/player_core/tmp/token.txt",
+		AuthKey:      "85dea59886138936d3b1a573f6069357",
 	}
 
 	a = app.NewApp(config, mainCallback)
 
-	if err := a.Init(); err != nil {
-		log.Fatalf("init app failed: %v", err)
-	}
+	a.Init()
 }
 
 // For Loading Data Screen...

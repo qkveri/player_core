@@ -12,7 +12,7 @@ gomobile init
 export ANDROID_HOME=...
 export ANDROID_NDK_HOME=...
 
-gomobile bind --target=android ./mobile
+gomobile bind -v --target=android ./mobile
 ```
 
 ## CLI
