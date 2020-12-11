@@ -57,7 +57,9 @@ func (m *musicData) unsubscribe(id int) func() {
 func (m *musicData) dispatch(musicData *domain.MusicData) {
 	m.Lock()
 	for _, cb := range m.subscribers {
-		cb(musicData)
+		if cb != nil {
+			cb(musicData)
+		}
 	}
 	m.Unlock()
 }
