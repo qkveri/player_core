@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -9,12 +10,17 @@ import (
 	"path"
 	"time"
 
+	"github.com/jonboulle/clockwork"
+	"github.com/oklog/run"
 	"github.com/rs/zerolog"
 
 	"github.com/qkveri/player_core/pkg/api"
 	"github.com/qkveri/player_core/pkg/domain"
 	"github.com/qkveri/player_core/pkg/domain/repositories"
+	"github.com/qkveri/player_core/pkg/services/downloader"
+	"github.com/qkveri/player_core/pkg/services/playlister"
 	"github.com/qkveri/player_core/pkg/state"
+	"github.com/qkveri/player_core/pkg/utils"
 )
 
 type App struct {
@@ -54,13 +60,49 @@ func (a *App) Init() {
 	a.loginRepo = repositories.NewLoginApiRepo(a.apiClient)
 	a.musicDataRepo = repositories.NewMusicDataApiRepo(a.apiClient)
 	a.authRepo = repositories.NewAuthFileRepo(path.Join(a.config.DataDir, "a.tk"), a.config.SecretKey)
-
-	// show first screen...
-	a.showScreen(ScreenLoadingData)
 }
 
 func (a *App) Run(ctx context.Context) {
-	<-ctx.Done()
+	// show first screen...
+	a.showScreen(ScreenLoadingData)
+
+	errCb := func(err error) {
+		a.callbackMain.SendErrorMessage(a.errMessageForClient(err))
+	}
+
+	g := run.Group{}
+
+	// run playlister service...
+	g.Add(func() error {
+		return playlister.NewService(a.state, a.logger, clockwork.NewRealClock()).Run(ctx)
+	}, func(err error) {
+		//
+	})
+
+	// run downloader service...
+	g.Add(func() error {
+		mp3RootDir := path.Join(a.config.CacheDir, "m")
+
+		if err := utils.MkDirIfNotExists(mp3RootDir); err != nil {
+			err = fmt.Errorf("cannot MkDirIfNotExists: %w, mp3RootDir: %s", err, mp3RootDir)
+
+			a.logger.Err(err).Msg("create mp3RootDir fail")
+
+			return err
+		}
+
+		return downloader.NewService(a.state, a.logger, errCb, mp3RootDir).Run(ctx)
+	}, func(err error) {
+		//
+	})
+
+	if err := g.Run(); err != nil {
+		if errors.Is(err, context.Canceled) {
+			return
+		}
+
+		errCb(fmt.Errorf("cannot run services: %w", err))
+	}
 }
 
 func (a *App) iniLogger() zerolog.Logger {
@@ -92,14 +134,8 @@ func (a *App) iniLogger() zerolog.Logger {
 func (a *App) createLogFile() (*os.File, error) {
 	dir := path.Join(a.config.CacheDir, "logs")
 
-	if _, err := os.Stat(dir); err != nil {
-		if os.IsNotExist(err) {
-			if err := os.Mkdir(dir, 0755); err != nil {
-				return nil, fmt.Errorf("os.Mkdir: %w, dir: %s", err, dir)
-			}
-		} else {
-			return nil, fmt.Errorf("os.Stat: %w, dir: %s", err, dir)
-		}
+	if err := utils.MkDirIfNotExists(dir); err != nil {
+		return nil, fmt.Errorf("cannot MkDirIfNotExists: %w, dir: %s", err, dir)
 	}
 
 	filePath := path.Join(dir, fmt.Sprintf("%s.txt", time.Now().Format(time.RFC3339)))

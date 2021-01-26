@@ -29,7 +29,7 @@ func main() {
 	cb := &callbackMain{}
 
 	core.InitApp(
-		true,
+		false,
 		"85dea59886138936d3b1a573f6069357",
 		"https://api.muzplat.ru/api/player/v2",
 		"/Users/petr/dev/apps/pult/player_core/tmp/data",

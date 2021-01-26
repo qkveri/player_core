@@ -45,12 +45,12 @@ func InitApp(
 	a.Init()
 }
 
-func Run() {
-	a.Run(ctx)
-}
-
 func Shutdown() {
 	ctxCancel()
+}
+
+func Run() {
+	a.Run(ctx)
 }
 
 func RegisterLoadDataCallback(callback CallbackLoadData) {

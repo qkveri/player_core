@@ -17,15 +17,9 @@ func newPlayerInfo() playerInfo {
 }
 
 func (p *playerInfo) Set(playerInfo *domain.PlayerInfo) {
-	p.Lock()
-	defer p.Unlock()
-
 	p.playerInfo = playerInfo
 }
 
 func (p *playerInfo) Get() *domain.PlayerInfo {
-	p.RLock()
-	defer p.RUnlock()
-
 	return p.playerInfo
 }

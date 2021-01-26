@@ -40,5 +40,5 @@ func (l *callbackLogin) SendCodeIncorrectErrorMessage(message string) {
 }
 
 func (l *callbackLogin) login() {
-	core.Login(l.code)
+	go core.Login(l.code)
 }

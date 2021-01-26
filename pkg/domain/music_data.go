@@ -6,9 +6,9 @@ type (
 	MusicData struct {
 		Hash      string
 		CdnURL    string
-		Ads       []Ad
-		Intervals []MusicDataInterval
-		Tracks    []Track
+		Ads       []*Ad
+		Intervals []*MusicDataInterval
+		Tracks    []*Track
 	}
 
 	MusicDataInterval struct {

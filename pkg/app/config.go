@@ -18,12 +18,12 @@ type Config struct {
 
 type CallbackMain interface {
 	ShowScreen(name string)
+	SendErrorMessage(message string)
 }
 
 type CallbackLoadData interface {
 	SendText(text string)
 	SendErrorMessage(message string)
-	SendPlayerInfo(json string)
 }
 
 type CallbackLogin interface {

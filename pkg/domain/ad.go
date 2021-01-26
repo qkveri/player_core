@@ -5,7 +5,7 @@ type (
 		ID    int
 		Title string
 		Times AdTimes
-		Track Track
+		Track *Track
 	}
 
 	AdTimes struct {

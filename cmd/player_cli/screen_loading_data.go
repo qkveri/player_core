@@ -10,7 +10,8 @@ func openLoadingScreen() {
 	cb := &callbackLoadData{}
 
 	core.RegisterLoadDataCallback(cb)
-	core.LoadData()
+
+	go core.LoadData()
 }
 
 type callbackLoadData struct {
@@ -26,8 +27,4 @@ func (l *callbackLoadData) SendErrorMessage(message string) {
 	if waitConfirm() {
 		core.LoadData()
 	}
-}
-
-func (l *callbackLoadData) SendPlayerInfo(json string) {
-	fmt.Printf("💾 SetPlayerInfo: %s\n", json)
 }

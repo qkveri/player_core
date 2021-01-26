@@ -39,9 +39,9 @@ func (m *musicDataApiRepo) Get(ctx context.Context) (*domain.MusicData, error) {
 		URL          string  `json:"url"`
 	}
 
-	var resMusicDataTrackToTrack = func(resTrack resMusicDataTrack) domain.Track {
+	var resMusicDataTrackToTrack = func(resTrack resMusicDataTrack) *domain.Track {
 		// nolint:gomnd
-		return domain.Track{
+		return &domain.Track{
 			ID:    resTrack.ID,
 			Title: resTrack.Title,
 			Artist: domain.Artist{
@@ -81,13 +81,13 @@ func (m *musicDataApiRepo) Get(ctx context.Context) (*domain.MusicData, error) {
 	musicData := &domain.MusicData{
 		Hash:      resMusicData.Hash,
 		CdnURL:    resMusicData.CDN,
-		Ads:       make([]domain.Ad, len(resMusicData.Ads)),
-		Intervals: make([]domain.MusicDataInterval, len(resMusicData.Intervals)),
-		Tracks:    make([]domain.Track, len(resMusicData.Tracks)),
+		Ads:       make([]*domain.Ad, len(resMusicData.Ads)),
+		Intervals: make([]*domain.MusicDataInterval, len(resMusicData.Intervals)),
+		Tracks:    make([]*domain.Track, len(resMusicData.Tracks)),
 	}
 
 	for i, ad := range resMusicData.Ads {
-		musicData.Ads[i] = domain.Ad{
+		musicData.Ads[i] = &domain.Ad{
 			ID:    ad.ID,
 			Title: ad.Title,
 			Times: domain.AdTimes{
@@ -99,7 +99,7 @@ func (m *musicDataApiRepo) Get(ctx context.Context) (*domain.MusicData, error) {
 	}
 
 	for i, interval := range resMusicData.Intervals {
-		musicData.Intervals[i] = domain.MusicDataInterval{
+		musicData.Intervals[i] = &domain.MusicDataInterval{
 			Start:    interval.Start,
 			End:      interval.End,
 			TrackIDs: interval.TrackIDs,

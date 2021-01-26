@@ -2,8 +2,9 @@ package app
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/qkveri/player_core/pkg/api"
 )
@@ -28,9 +29,6 @@ func (a *App) LoadData(ctx context.Context, callback CallbackLoadData) {
 			Msg("auth get from repo success, set to api client...")
 
 		a.apiClient.SetAuthToken(auth.Token)
-
-		// inject player id to logger
-		a.logger = a.logger.With().Int("playerID", auth.PlayerID).Logger()
 	} else {
 		a.logger.Debug().Msg("auth not set, show login screen...")
 		a.showScreen(ScreenLogin)
@@ -50,6 +48,14 @@ func (a *App) LoadData(ctx context.Context, callback CallbackLoadData) {
 		}
 
 		return
+	}
+
+	if err := a.awaitLoadFirstTrack(ctx, callback); err != nil {
+		if errors.Is(err, context.Canceled) {
+			return
+		}
+
+		callback.SendErrorMessage(a.errMessageForClient(err))
 	}
 
 	a.showScreen(ScreenPlayer)
@@ -79,17 +85,9 @@ func (a *App) loadPlayerInfo(ctx context.Context, callback CallbackLoadData) err
 
 	a.logger.Debug().Interface("playerInfo", playerInfo).Msg("playerInfo loaded")
 
-	// send playerInfo...
-	jsonPlayerInfo, err := json.Marshal(playerInfo)
-
-	if err != nil {
-		callback.SendErrorMessage(a.errMessageForClient(err))
-
-		return fmt.Errorf("playerInfo cannot unmarshall: %w", err)
-	}
-
-	callback.SendPlayerInfo(string(jsonPlayerInfo))
+	a.state.PlayerInfo.Lock()
 	a.state.PlayerInfo.Set(playerInfo)
+	a.state.PlayerInfo.Unlock()
 
 	return nil
 }
@@ -106,7 +104,35 @@ func (a *App) loadMusicData(ctx context.Context, callback CallbackLoadData) erro
 
 	a.logger.Debug().Interface("musicData", musicData).Msg("musicData loaded")
 
+	a.state.MusicData.Lock()
 	a.state.MusicData.Set(musicData)
+	a.state.MusicData.Unlock()
 
 	return nil
+}
+
+func (a *App) awaitLoadFirstTrack(ctx context.Context, callback CallbackLoadData) error {
+	callback.SendText("Загрузка данных...")
+
+	t := time.NewTicker(time.Second)
+	defer t.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+
+		case <-t.C:
+			a.state.Playlist.RLock()
+			progress := a.state.Playlist.FirstItemDownloadProgress()
+
+			a.state.Playlist.RUnlock()
+
+			if progress.IsDone() {
+				return nil
+			}
+
+			callback.SendText(fmt.Sprintf("Загрузка данных (%s)...", progress))
+		}
+	}
 }
